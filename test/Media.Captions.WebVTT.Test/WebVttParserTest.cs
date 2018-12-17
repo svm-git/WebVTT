@@ -407,7 +407,7 @@ Bad caption";
 Some caption
 
 REGION
-Some data";
+Some:data";
 
             using (var reader = new StringReader(vtt))
             {
@@ -480,6 +480,85 @@ REGION
                 Assert.IsTrue(captions.Regions.Length == 1);
                 Assert.IsNotNull(captions.Regions[0].RawContent);
                 Assert.AreEqual(region, captions.Regions[0].RawContent);
+
+                Assert.AreEqual("fred", captions.Regions[0].Id, "IDs are different.");
+                Assert.AreEqual(3, captions.Regions[0].Lines.Value, "Lines are different.");
+                Assert.AreEqual(true, captions.Regions[0].Scroll.Value, "Scrolls are different.");
+                Assert.AreEqual(40.0, captions.Regions[0].WidthPercent.Value, "Widths are different.");
+                Assert.AreEqual(0.0, captions.Regions[0].RegionAnchor.Value.XPercent, "Region anchor Xs are different.");
+                Assert.AreEqual(100.0, captions.Regions[0].RegionAnchor.Value.YPercent, "Region anchor Ys are different.");
+                Assert.AreEqual(10.0, captions.Regions[0].ViewPortAnchor.Value.XPercent, "Viewport anchor Xs are different.");
+                Assert.AreEqual(90.0, captions.Regions[0].ViewPortAnchor.Value.YPercent, "Viewport anchor Ys are different.");
+            }
+        }
+
+        [TestMethod]
+        public void ParseRegionWithInvalidSettings()
+        {
+            string region = @"id:fred
+width:40
+lines:_
+regionanchor:0,100%
+viewportanchor:10,90%
+scroll:down";
+            string vtt =
+@"WEBVTT
+
+REGION
+" + region + @"
+";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions);
+                Assert.IsNotNull(captions.Regions);
+                Assert.IsTrue(captions.Regions.Length == 1);
+                Assert.IsNotNull(captions.Regions[0].RawContent);
+                Assert.AreEqual(region, captions.Regions[0].RawContent);
+
+                Assert.AreEqual("fred", captions.Regions[0].Id, "IDs are different.");
+                Assert.IsNull(captions.Regions[0].Lines);
+                Assert.AreEqual(false, captions.Regions[0].Scroll.Value, "Scrolls are different.");
+                Assert.IsNull(captions.Regions[0].WidthPercent);
+                Assert.IsNull(captions.Regions[0].RegionAnchor);
+                Assert.IsNull(captions.Regions[0].ViewPortAnchor);
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidDataException))]
+        public void IfNoColonInSettings_Throws()
+        {
+            string region = @"id-fred";
+            string vtt =
+@"WEBVTT
+
+REGION
+" + region + @"
+";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidDataException))]
+        public void IfNoValueAfterColonInSettings_Throws()
+        {
+            string region = @"width:";
+            string vtt =
+@"WEBVTT
+
+REGION
+" + region + @"
+";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
             }
         }
 
@@ -506,6 +585,63 @@ STYLE
                 Assert.IsTrue(captions.Styles.Length == 1);
                 Assert.IsNotNull(captions.Styles[0].RawContent);
                 Assert.AreEqual(style, captions.Styles[0].RawContent);
+            }
+        }
+
+        [TestMethod]
+        public void ParseCaptionWithSettings()
+        {
+            string caption = @"align:right size:50% vertical:lr line:3%,center position:15%,line-right region:r";
+            string vtt =
+@"WEBVTT
+
+00:30.000 --> 00:31.500 " + caption + @"
+<v Roger Bingham>We are in New York City";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions);
+                Assert.IsNotNull(captions.Cues);
+                Assert.IsTrue(captions.Cues.Length == 1);
+                Assert.IsNotNull(captions.Cues[0].RawSettings);
+                Assert.AreEqual(caption, captions.Cues[0].RawSettings);
+
+                Assert.AreEqual("r", captions.Cues[0].Region, "Regions are different.");
+                Assert.AreEqual(TextAlignment.Right, captions.Cues[0].Alignment.Value, "Alignments are different.");
+                Assert.AreEqual(50, captions.Cues[0].SizePercent.Value, "Sizes are different.");
+                Assert.AreEqual(VerticalTextLayout.LeftToRight, captions.Cues[0].Vertical.Value, "Verticals are different.");
+                Assert.AreEqual(LineAlignment.Center, captions.Cues[0].Line.Value.Alignment.Value, "Line.Alignments are different.");
+                Assert.AreEqual(3.0, captions.Cues[0].Line.Value.Percent.Value, "Line.Percents are different.");
+                Assert.AreEqual(PositionAlignment.LineRight, captions.Cues[0].Position.Value.Alignment.Value, "Position.Alignments are different.");
+                Assert.AreEqual(15.0, captions.Cues[0].Position.Value.PositionPercent.Value, "Position.Percents are different.");
+            }
+        }
+
+        [TestMethod]
+        public void ParseCaptionIgnoreBadSettings()
+        {
+            string caption = @"align:bad size:50 vertical:no line:%,center position:15%_line-right random:r";
+            string vtt =
+@"WEBVTT
+
+00:30.000 --> 00:31.500 " + caption + @"
+<v Roger Bingham>We are in New York City";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions);
+                Assert.IsNotNull(captions.Cues);
+                Assert.IsTrue(captions.Cues.Length == 1);
+                Assert.IsNotNull(captions.Cues[0].RawSettings);
+                Assert.AreEqual(caption, captions.Cues[0].RawSettings);
+
+                Assert.IsNull(captions.Cues[0].Alignment);
+                Assert.IsNull(captions.Cues[0].SizePercent);
+                Assert.IsNull(captions.Cues[0].Vertical);
+                Assert.IsNull(captions.Cues[0].Line);
+                Assert.IsNull(captions.Cues[0].Position);
             }
         }
     }

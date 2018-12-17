@@ -12,12 +12,6 @@
     /// <remarks>See http://www.w3.org/TR/webvtt1/ for more details.</remarks>
     public static class WebVttParser
     {
-        private const string WebVttHeaderToken = "WEBVTT";
-        private const string RegionToken = "REGION";
-        private const string StyleToken = "STYLE";
-        private const string CommentToken = "NOTE";
-        private const string ArrowToken = "-->";
-
         /// <summary>
         /// Reads WebVTT media captions from a given <see cref="TextReader"/>.
         /// </summary>
@@ -36,7 +30,7 @@
 
             if (string.IsNullOrWhiteSpace(line) 
                 || line.Length < 6
-                || false == line.StartsWith(WebVttParser.WebVttHeaderToken)
+                || false == line.StartsWith(Constants.WebVttHeaderToken)
                 || line.Length >= 7 && line[6] != '\t' && line[6] != ' ')
             {
                 throw new InvalidDataException("The stream does not start with the correct WebVTT file signature.");
@@ -121,17 +115,17 @@
                 return null;
             }
 
-            if (line.StartsWith(WebVttParser.RegionToken))
+            if (line.StartsWith(Constants.RegionToken))
             {
                 return await WebVttParser.ReadRegionAsync(line, reader);
             }
 
-            if (line.StartsWith(WebVttParser.StyleToken))
+            if (line.StartsWith(Constants.StyleToken))
             {
                 return await WebVttParser.ReadStyleAsync(line, reader);
             }
 
-            if (line.StartsWith(WebVttParser.CommentToken))
+            if (line.StartsWith(Constants.CommentToken))
             {
                 return await WebVttParser.ReadCommentAsync(line, reader);
             }
@@ -150,8 +144,8 @@
             TextReader reader)
         {
             string line = firstLine;
-            if (line.Length > WebVttParser.RegionToken.Length
-                && false == string.IsNullOrWhiteSpace(line.Substring(WebVttParser.RegionToken.Length)))
+            if (line.Length > Constants.RegionToken.Length
+                && false == string.IsNullOrWhiteSpace(line.Substring(Constants.RegionToken.Length)))
             {
                 throw new InvalidDataException(string.Format("Invalid characters found after region definition header: {0}", line));
             }
@@ -163,19 +157,63 @@
                 line = await reader.ReadLineAsync();
                 if (false == string.IsNullOrEmpty(line))
                 {
-                    if (line.Contains(WebVttParser.ArrowToken))
+                    if (line.Contains(Constants.ArrowToken))
                     {
-                        throw new InvalidDataException(string.Format("Region definition must not contain '{0}'.", WebVttParser.ArrowToken));
+                        throw new InvalidDataException(string.Format("Region definition must not contain '{0}'.", Constants.ArrowToken));
                     }
 
                     content.SafeAppendLine(line);
                 }
             }
 
-            return new RegionDefinition()
+            var result = new RegionDefinition()
             {
                 RawContent = content.Length > 0 ? content.ToString() : null
             };
+
+            if (result.RawContent != null)
+            {
+                var settings = WebVttParser.ParseSettings(result.RawContent);
+
+                if (settings != null)
+                {
+                    string value;
+                    if (WebVttParser.TryGetStringSetting(Constants.RegionIdName, settings, out value))
+                    {
+                        result.Id = value;
+                    }
+
+                    double percent;
+                    if (WebVttParser.TryGetPercentSetting(Constants.WidthName, settings, out percent))
+                    {
+                        result.WidthPercent = percent;
+                    }
+
+                    Anchor anchor;
+                    if (WebVttParser.TryGetAnchorSetting(Constants.RegionAnchorName, settings, out anchor))
+                    {
+                        result.RegionAnchor = anchor;
+                    }
+
+                    if (WebVttParser.TryGetAnchorSetting(Constants.ViewPortAnchorName, settings, out anchor))
+                    {
+                        result.ViewPortAnchor = anchor;
+                    }
+
+                    if (WebVttParser.TryGetStringSetting(Constants.ScrollName, settings, out value))
+                    {
+                        result.Scroll = string.Equals(value, Constants.ScrollUpValue, StringComparison.OrdinalIgnoreCase);
+                    }
+
+                    int lines;
+                    if (WebVttParser.TryGetIntSetting(Constants.LinesName, settings, out lines))
+                    {
+                        result.Lines = lines;
+                    }
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -189,8 +227,8 @@
             TextReader reader)
         {
             string line = firstLine;
-            if (line.Length > WebVttParser.StyleToken.Length
-                && false == string.IsNullOrWhiteSpace(line.Substring(WebVttParser.StyleToken.Length)))
+            if (line.Length > Constants.StyleToken.Length
+                && false == string.IsNullOrWhiteSpace(line.Substring(Constants.StyleToken.Length)))
             {
                 throw new InvalidDataException(string.Format("Invalid characters found after style header: {0}", line));
             }
@@ -202,9 +240,9 @@
                 line = await reader.ReadLineAsync();
                 if (false == string.IsNullOrEmpty(line))
                 {
-                    if (line.Contains(WebVttParser.ArrowToken))
+                    if (line.Contains(Constants.ArrowToken))
                     {
-                        throw new InvalidDataException(string.Format("Style definition must not contain '{0}'.", WebVttParser.ArrowToken));
+                        throw new InvalidDataException(string.Format("Style definition must not contain '{0}'.", Constants.ArrowToken));
                     }
 
                     content.SafeAppendLine(line);
@@ -230,9 +268,9 @@
             string line = firstLine;
             var content = new StringBuilder(100);
 
-            if (line.Length > WebVttParser.CommentToken.Length)
+            if (line.Length > Constants.CommentToken.Length)
             {
-                var inlineComment = line.Substring(WebVttParser.CommentToken.Length).TrimStart('\t', ' ');
+                var inlineComment = line.Substring(Constants.CommentToken.Length).TrimStart('\t', ' ');
                 if (false == string.IsNullOrWhiteSpace(inlineComment))
                 {
                     content.Append(inlineComment);
@@ -269,7 +307,7 @@
 
             Cue result = new Cue();
 
-            if (false == line.Contains(WebVttParser.ArrowToken))
+            if (false == line.Contains(Constants.ArrowToken))
             {
                 result.Id = line;
                 line = await reader.ReadLineAsync();
@@ -283,12 +321,12 @@
                 position++;
             }
 
-            if (0 != string.CompareOrdinal(line, position, WebVttParser.ArrowToken, 0, WebVttParser.ArrowToken.Length))
+            if (0 != string.CompareOrdinal(line, position, Constants.ArrowToken, 0, Constants.ArrowToken.Length))
             {
                 throw new InvalidDataException(string.Format("Invalid characters found in cue timings '{0}' at position {1}.", line, position));
             }
 
-            position += WebVttParser.ArrowToken.Length;
+            position += Constants.ArrowToken.Length;
 
             while (position < line.Length && char.IsWhiteSpace(line, position))
             {
@@ -308,6 +346,46 @@
                 if (false == string.IsNullOrWhiteSpace(settings))
                 {
                     result.RawSettings = settings;
+
+                    var parsedSettings = WebVttParser.ParseSettings(settings);
+                    if (parsedSettings != null)
+                    {
+                        VerticalTextLayout vertical;
+                        if (WebVttParser.TryGetVerticalTextLayoutSetting(Constants.VerticalName, parsedSettings, out vertical))
+                        {
+                            result.Vertical = vertical;
+                        }
+
+                        LineSettings lineSetting;
+                        if (WebVttParser.TryGetLineSetting(Constants.LineName, parsedSettings, out lineSetting))
+                        {
+                            result.Line = lineSetting;
+                        }
+
+                        PositionSettings positionSetting;
+                        if (WebVttParser.TryGetPositionSetting(Constants.PositionName, parsedSettings, out positionSetting))
+                        {
+                            result.Position = positionSetting;
+                        }
+
+                        double percent;
+                        if (WebVttParser.TryGetPercentSetting(Constants.SizeName, parsedSettings, out percent))
+                        {
+                            result.SizePercent = percent;
+                        }
+
+                        TextAlignment alignment;
+                        if (WebVttParser.TryGetAlignmentSetting(Constants.AlignName, parsedSettings, out alignment))
+                        {
+                            result.Alignment = alignment;
+                        }
+
+                        string name;
+                        if (WebVttParser.TryGetStringSetting(Constants.RegionName, parsedSettings, out name))
+                        {
+                            result.Region = name;
+                        }
+                    }
                 }
             }
 
@@ -316,9 +394,9 @@
                 line = await reader.ReadLineAsync();
                 if (false == string.IsNullOrEmpty(line))
                 {
-                    if (line.Contains(WebVttParser.ArrowToken))
+                    if (line.Contains(Constants.ArrowToken))
                     {
-                        throw new InvalidDataException(string.Format("Cue must not contain '{0}'.", WebVttParser.ArrowToken));
+                        throw new InvalidDataException(string.Format("Cue must not contain '{0}'.", Constants.ArrowToken));
                     }
 
                     content.SafeAppendLine(line);
@@ -434,6 +512,429 @@
             {
                 throw new InvalidDataException(string.Format("Cue timing value '{0}' is too large.", line));
             }
+        }
+
+        /// <summary>
+        /// Utility method to parse region or cue setting values.
+        /// </summary>
+        /// <param name="rawSettings">Raw settings string to parse.</param>
+        /// <returns>Collection of setting values parsed from the input.</returns>
+        private static Dictionary<string, string> ParseSettings(
+            string rawSettings)
+        {
+            Dictionary<string, string> result = null;
+
+            if (false == string.IsNullOrWhiteSpace(rawSettings))
+            {
+                int start = 0;
+                int current = 0;
+                foreach (char c in rawSettings)
+                {
+                    bool last = rawSettings.Length - current == 1;
+                    if (char.IsWhiteSpace(c) || last)
+                    {
+                        if (start < current || last)
+                        {
+                            KeyValuePair<string, string> setting;
+                            if (WebVttParser.TryParseSettingValue(rawSettings.Substring(start, current - start + (last ? 1 : 0)), out setting))
+                            {
+                                if (result == null)
+                                {
+                                    result = new Dictionary<string, string>(5, StringComparer.OrdinalIgnoreCase);
+                                }
+
+                                result[setting.Key] = setting.Value;
+                            }
+                            else
+                            {
+                                throw new InvalidDataException(string.Format("Invalid setting value in '{0}'.", rawSettings));
+                            }
+                        }
+
+                        current++;
+                        start = current;
+                    }
+                    else
+                    {
+                        current++;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Utility method to parse setting value pair.
+        /// </summary>
+        /// <param name="input">Input string to parse.</param>
+        /// <param name="setting">If parsing is successfull, contains setting name and value.</param>
+        /// <returns>True if setting value was parsed successfully; otherwise false.</returns>
+        private static bool TryParseSettingValue(
+            string input,
+            out KeyValuePair<string, string> setting)
+        {
+            setting = default(KeyValuePair<string, string>);
+
+            int index = input.IndexOf(':');
+            if (index < 0 || input.Length - index < 2)
+            {
+                return false;
+            }
+
+            setting = new KeyValuePair<string,string>(
+                input.Substring(0, index),
+                input.Substring(index + 1, input.Length - index - 1));
+
+            return true;
+        }
+
+        /// <summary>
+        /// Utility method to get string setting value.
+        /// </summary>
+        /// <param name="name">Setting name.</param>
+        /// <param name="settings">Setting property bag.</param>
+        /// <param name="value">If successful, contains setting value; otherwise null.</param>
+        /// <returns>True if the setting exists and is not empty; otherwise false.</returns>
+        private static bool TryGetStringSetting(
+            string name,
+            Dictionary<string, string> settings,
+            out string value)
+        {
+            if (settings.TryGetValue(name, out value)
+                && false == string.IsNullOrEmpty(value))
+            {
+                return true;
+            }
+
+            value = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Utility method to get percent setting value.
+        /// </summary>
+        /// <param name="name">Setting name.</param>
+        /// <param name="settings">Setting property bag.</param>
+        /// <param name="value">If successful, contains setting value; otherwise default value.</param>
+        /// <returns>True if the setting exists and is valid; otherwise false.</returns>
+        private static bool TryGetPercentSetting(
+            string name,
+            Dictionary<string, string> settings,
+            out double value)
+        {
+            string stringValue;
+            if (settings.TryGetValue(name, out stringValue)
+                && false == string.IsNullOrEmpty(stringValue))
+            {
+                return WebVttParser.TryParsePercent(stringValue, out value);
+            }
+
+            value = default(double);
+            return false;
+        }
+
+        /// <summary>
+        /// Utility method to get anchor setting value.
+        /// </summary>
+        /// <param name="name">Setting name.</param>
+        /// <param name="settings">Setting property bag.</param>
+        /// <param name="value">If successful, contains setting value; otherwise default value.</param>
+        /// <returns>True if the setting exists and is valid; otherwise false.</returns>
+        private static bool TryGetAnchorSetting(
+            string name,
+            Dictionary<string, string> settings,
+            out Anchor value)
+        {
+            value = default(Anchor);
+
+            string stringValue;
+            if (false == settings.TryGetValue(name, out stringValue)
+                || string.IsNullOrEmpty(stringValue))
+            {
+                return false;
+            }
+
+            int index = stringValue.IndexOf(',');
+            if (index < 2 || stringValue.Length - index < 3)
+            {
+                return false;
+            }
+
+            if (false == WebVttParser.TryParsePercent(stringValue.Substring(0, index), out value.XPercent)
+                || false == WebVttParser.TryParsePercent(stringValue.Substring(index + 1, stringValue.Length - index - 1), out value.YPercent))
+            {
+                value = default(Anchor);
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Utility method to get integer setting value.
+        /// </summary>
+        /// <param name="name">Setting name.</param>
+        /// <param name="settings">Setting property bag.</param>
+        /// <param name="value">If successful, contains setting value; otherwise default value.</param>
+        /// <returns>True if the setting exists and is valid; otherwise false.</returns>
+        private static bool TryGetIntSetting(
+            string name,
+            Dictionary<string, string> settings,
+            out int value)
+        {
+            string stringValue;
+            if (settings.TryGetValue(name, out stringValue)
+                && false == string.IsNullOrEmpty(stringValue))
+            {
+                return int.TryParse(stringValue, out value);
+            }
+
+            value = default(int);
+            return false;
+        }
+
+        /// <summary>
+        /// Utility method to get vertical text layout setting value.
+        /// </summary>
+        /// <param name="name">Setting name.</param>
+        /// <param name="settings">Setting property bag.</param>
+        /// <param name="value">If successful, contains setting value; otherwise default value.</param>
+        /// <returns>True if the setting exists and is valid; otherwise false.</returns>
+        private static bool TryGetVerticalTextLayoutSetting(
+            string name,
+            Dictionary<string, string> settings,
+            out VerticalTextLayout value)
+        {
+            string stringValue;
+            if (settings.TryGetValue(name, out stringValue)
+                && false == string.IsNullOrEmpty(stringValue))
+            {
+                if (string.Equals(Constants.RightToLeftValue, stringValue, StringComparison.OrdinalIgnoreCase))
+                {
+                    value = VerticalTextLayout.RightToLeft;
+                    return true;
+                }
+
+                if (string.Equals(Constants.LeftToRightValue, stringValue, StringComparison.OrdinalIgnoreCase))
+                {
+                    value = VerticalTextLayout.LeftToRight;
+                    return true;
+                }
+            }
+
+            value = default(VerticalTextLayout);
+            return false;
+        }
+
+        /// <summary>
+        /// Utility method to get line setting value.
+        /// </summary>
+        /// <param name="name">Setting name.</param>
+        /// <param name="settings">Setting property bag.</param>
+        /// <param name="value">If successful, contains setting value; otherwise default value.</param>
+        /// <returns>True if the setting exists and is valid; otherwise false.</returns>
+        private static bool TryGetLineSetting(
+            string name,
+            Dictionary<string, string> settings,
+            out LineSettings value)
+        {
+            value = default(LineSettings);
+
+            string stringValue;
+            if (false == settings.TryGetValue(name, out stringValue)
+                || string.IsNullOrEmpty(stringValue))
+            {
+                return false;
+            }
+
+            string offsetValue = stringValue;
+            int commaIndex = stringValue.IndexOf(',');
+            if (0 <= commaIndex)
+            {
+                if (stringValue.Length - commaIndex < 2)
+                {
+                    return false;
+                }
+
+                string alignment = stringValue.Substring(commaIndex + 1, stringValue.Length - commaIndex - 1);
+                if (string.Equals(Constants.StartValue, alignment, StringComparison.OrdinalIgnoreCase))
+                {
+                    value.Alignment = LineAlignment.Start;
+                }
+                else if (string.Equals(Constants.CenterValue, alignment, StringComparison.OrdinalIgnoreCase))
+                {
+                    value.Alignment = LineAlignment.Center;
+                }
+                else if (string.Equals(Constants.EndValue, alignment, StringComparison.OrdinalIgnoreCase))
+                {
+                    value.Alignment = LineAlignment.End;
+                }
+                else
+                {
+                    return false;
+                }
+
+                offsetValue = stringValue.Substring(0, commaIndex);
+            }
+
+            double percent;
+            if (WebVttParser.TryParsePercent(offsetValue, out percent))
+            {
+                value.Percent = percent;
+                return true;
+            }
+
+            int number;
+            if (int.TryParse(offsetValue, out number))
+            {
+                value.LineNumber = number;
+                return true;
+            }
+
+            value = default(LineSettings);
+            return false;
+        }
+
+        /// <summary>
+        /// Utility method to get position setting value.
+        /// </summary>
+        /// <param name="name">Setting name.</param>
+        /// <param name="settings">Setting property bag.</param>
+        /// <param name="value">If successful, contains setting value; otherwise default value.</param>
+        /// <returns>True if the setting exists and is valid; otherwise false.</returns>
+        private static bool TryGetPositionSetting(
+            string name,
+            Dictionary<string, string> settings,
+            out PositionSettings value)
+        {
+            value = default(PositionSettings);
+
+            string stringValue;
+            if (false == settings.TryGetValue(name, out stringValue)
+                || string.IsNullOrEmpty(stringValue))
+            {
+                return false;
+            }
+
+            string positionValue = stringValue;
+            int commaIndex = stringValue.IndexOf(',');
+            if (0 <= commaIndex)
+            {
+                if (stringValue.Length - commaIndex < 2)
+                {
+                    return false;
+                }
+
+                string alignment = stringValue.Substring(commaIndex + 1, stringValue.Length - commaIndex - 1);
+                if (string.Equals(Constants.LineLeftValue, alignment, StringComparison.OrdinalIgnoreCase))
+                {
+                    value.Alignment = PositionAlignment.LineLeft;
+                }
+                else if (string.Equals(Constants.CenterValue, alignment, StringComparison.OrdinalIgnoreCase))
+                {
+                    value.Alignment = PositionAlignment.Center;
+                }
+                else if (string.Equals(Constants.LineRightValue, alignment, StringComparison.OrdinalIgnoreCase))
+                {
+                    value.Alignment = PositionAlignment.LineRight;
+                }
+                else
+                {
+                    return false;
+                }
+
+                positionValue = stringValue.Substring(0, commaIndex);
+            }
+
+            double percent;
+            if (WebVttParser.TryParsePercent(positionValue, out percent))
+            {
+                value.PositionPercent = percent;
+                return true;
+            }
+
+            value = default(PositionSettings);
+            return false;
+        }
+
+        /// <summary>
+        /// Utility method to get alignment setting value.
+        /// </summary>
+        /// <param name="name">Setting name.</param>
+        /// <param name="settings">Setting property bag.</param>
+        /// <param name="value">If successful, contains setting value; otherwise default value.</param>
+        /// <returns>True if the setting exists and is valid; otherwise false.</returns>
+        private static bool TryGetAlignmentSetting(
+            string name,
+            Dictionary<string, string> settings,
+            out TextAlignment value)
+        {
+            value = default(TextAlignment);
+
+            string stringValue;
+            if (false == settings.TryGetValue(name, out stringValue)
+                || string.IsNullOrEmpty(stringValue))
+            {
+                return false;
+            }
+
+            if (string.Equals(Constants.StartValue, stringValue, StringComparison.OrdinalIgnoreCase))
+            {
+                value = TextAlignment.Start;
+            }
+            else if (string.Equals(Constants.CenterValue, stringValue, StringComparison.OrdinalIgnoreCase))
+            {
+                value = TextAlignment.Center;
+            }
+            else if (string.Equals(Constants.EndValue, stringValue, StringComparison.OrdinalIgnoreCase))
+            {
+                value = TextAlignment.End;
+            }
+            else if (string.Equals(Constants.LeftValue, stringValue, StringComparison.OrdinalIgnoreCase))
+            {
+                value = TextAlignment.Left;
+            }
+            else if (string.Equals(Constants.RightValue, stringValue, StringComparison.OrdinalIgnoreCase))
+            {
+                value = TextAlignment.Right;
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Utility method to parse percent value from string.
+        /// </summary>
+        /// <param name="input">Input string to process.</param>
+        /// <param name="value">If successful, percent value read from the input; otherwise default.</param>
+        /// <returns>True if the percent value was read successfully; otherwise false.</returns>
+        private static bool TryParsePercent(
+            string input,
+            out double value)
+        {
+            value = default(double);
+            if (input.Length < 2 || input[input.Length - 1] != '%')
+            {
+                return false;
+            }
+
+            if (false == double.TryParse(input.Substring(0, input.Length - 1), out value))
+            {
+                return false;
+            }
+
+            if (value < 0.0 || value > 100.0)
+            {
+                value = default(double);
+                return false;
+            }
+
+            return true;
         }
     }
 }

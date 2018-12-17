@@ -41,14 +41,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Anchor.cs" />
     <Compile Include="Comment.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Cue.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="LineAlignment.cs" />
+    <Compile Include="LineSettings.cs" />
     <Compile Include="MediaCaptions.cs" />
     <Compile Include="BaseBlock.cs" />
+    <Compile Include="PositionAlignment.cs" />
+    <Compile Include="PositionSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegionDefinition.cs" />
     <Compile Include="Style.cs" />
+    <Compile Include="TextAlignment.cs" />
+    <Compile Include="VerticalTextLayout.cs" />
     <Compile Include="WebVttParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
