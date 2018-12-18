@@ -26,7 +26,8 @@
             }
 
             // Process stream header line
-            var line = await reader.ReadLineAsync();
+            var line = await reader.ReadLineAsync()
+                .ConfigureAwait(false);
 
             if (string.IsNullOrWhiteSpace(line) 
                 || line.Length < 6
@@ -41,7 +42,8 @@
             // Process (skip over) optional headers from the stream
             while (false == string.IsNullOrEmpty(line))
             {
-                line = await reader.ReadLineAsync();
+                line = await reader.ReadLineAsync()
+                    .ConfigureAwait(false);
             }
 
             // Process media caption blocks.
@@ -53,7 +55,8 @@
 
             do
             {
-                block = await WebVttParser.ReadBlockAsync(reader);
+                block = await WebVttParser.ReadBlockAsync(reader)
+                    .ConfigureAwait(false);
 
                 RegionDefinition region = block as RegionDefinition;
                 Style style = block as Style;
@@ -108,7 +111,8 @@
         private static async Task<BaseBlock> ReadBlockAsync(
             TextReader reader)
         {
-            var line = await reader.ReadLineAsync();
+            var line = await reader.ReadLineAsync()
+                .ConfigureAwait(false);
 
             if (string.IsNullOrEmpty(line))
             {
@@ -117,20 +121,24 @@
 
             if (line.StartsWith(Constants.RegionToken))
             {
-                return await WebVttParser.ReadRegionAsync(line, reader);
+                return await WebVttParser.ReadRegionAsync(line, reader)
+                    .ConfigureAwait(false);
             }
 
             if (line.StartsWith(Constants.StyleToken))
             {
-                return await WebVttParser.ReadStyleAsync(line, reader);
+                return await WebVttParser.ReadStyleAsync(line, reader)
+                    .ConfigureAwait(false);
             }
 
             if (line.StartsWith(Constants.CommentToken))
             {
-                return await WebVttParser.ReadCommentAsync(line, reader);
+                return await WebVttParser.ReadCommentAsync(line, reader)
+                    .ConfigureAwait(false);
             }
 
-            return await ReadCueAsync(line, reader);
+            return await ReadCueAsync(line, reader)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -154,7 +162,9 @@
 
             while (false == string.IsNullOrEmpty(line))
             {
-                line = await reader.ReadLineAsync();
+                line = await reader.ReadLineAsync()
+                    .ConfigureAwait(false);
+
                 if (false == string.IsNullOrEmpty(line))
                 {
                     if (line.Contains(Constants.ArrowToken))
@@ -237,7 +247,9 @@
 
             while (false == string.IsNullOrEmpty(line))
             {
-                line = await reader.ReadLineAsync();
+                line = await reader.ReadLineAsync()
+                    .ConfigureAwait(false);
+
                 if (false == string.IsNullOrEmpty(line))
                 {
                     if (line.Contains(Constants.ArrowToken))
@@ -279,7 +291,9 @@
 
             while (false == string.IsNullOrEmpty(line))
             {
-                line = await reader.ReadLineAsync();
+                line = await reader.ReadLineAsync()
+                    .ConfigureAwait(false);
+
                 if (false == string.IsNullOrEmpty(line))
                 {
                     content.SafeAppendLine(line);
@@ -310,7 +324,8 @@
             if (false == line.Contains(Constants.ArrowToken))
             {
                 result.Id = line;
-                line = await reader.ReadLineAsync();
+                line = await reader.ReadLineAsync()
+                    .ConfigureAwait(false);
             }
 
             int position = 0;
@@ -391,7 +406,9 @@
 
             while (false == string.IsNullOrEmpty(line))
             {
-                line = await reader.ReadLineAsync();
+                line = await reader.ReadLineAsync()
+                    .ConfigureAwait(false);
+
                 if (false == string.IsNullOrEmpty(line))
                 {
                     if (line.Contains(Constants.ArrowToken))
@@ -406,6 +423,16 @@
             if (content.Length > 0)
             {
                 result.RawContent = content.ToString();
+
+                List<Span> spans;
+
+                position = 0;
+                if (WebVttParser.TryParseSpans(result.RawContent, ref position, out spans)
+                    && spans != null
+                    && spans.Count > 0)
+                {
+                    result.Content = spans;
+                }
             }
 
             return result;
@@ -935,6 +962,395 @@
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Utility method to parse cue content and create a span syntax tree.
+        /// </summary>
+        /// <param name="input">Input string to process.</param>
+        /// <param name="position">Position in the string to begin parsing.</param>
+        /// <param name="spans">If successful, contains the list of spans parsed from the input.</param>
+        /// <returns>True if successfully parsed spans from the input; otherwise false.</returns>
+        private static bool TryParseSpans(
+            string input,
+            ref int position,
+            out List<Span> spans)
+        {
+            spans = null;
+
+            if (string.IsNullOrEmpty(input))
+            {
+                return false;
+            }
+
+            List<Span> result = null;
+            int textStart = position;
+
+            for (; position < input.Length; position++)
+            {
+                char c = input[position];
+                bool last = position == input.Length - 1;
+
+                if (c == '<' || last || c == '\r' || c == '\n')
+                {
+                    if (textStart < position || last && c != '<')
+                    {
+                        WebVttParser.SafeAddSpan(
+                            new Span() 
+                            {
+                                Type = SpanType.Text,
+                                Text = input.Substring(textStart, position - textStart + (last ? 1 : 0))
+                            },
+                            ref result);
+                    }
+
+                    if (false == last)
+                    {
+                        if (c == '<' && input[position + 1] == '/')
+                        {
+                            break;
+                        }
+
+                        if (c == '<')
+                        {
+                            Span span;
+                            if (false == WebVttParser.TryParseSpan(input, ref position, out span))
+                            {
+                                return false;
+                            }
+
+                            WebVttParser.SafeAddSpan(span, ref result);
+                        }
+
+                        textStart = position + 1;
+                    }
+                    else if (c == '<')
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            spans = result;
+            return true;
+        }
+
+        /// <summary>
+        /// Utility method to parse single span from text input.
+        /// </summary>
+        /// <param name="input">Input string to process.</param>
+        /// <param name="position">Position in the string to begin parsing.</param>
+        /// <param name="span">If successful, contains span parsed from the input.</param>
+        /// <returns>True if span was successfully parsed from the input; otherwise false.</returns>
+        private static bool TryParseSpan(
+            string input,
+            ref int position,
+            out Span span)
+        {
+            span = null;
+
+            if (position >= input.Length || input[position] != '<')
+            {
+                return false;
+            }
+
+            string tagName;
+            string endTagName;
+            string annotation;
+            List<string> classes;
+            List<Span> innerSpans;
+
+            if (false == WebVttParser.TryParseTagStart(input, ref position, out tagName, out classes, out annotation))
+            {
+                return false;
+            }
+
+            if (false == WebVttParser.TryParseSpans(input, ref position, out innerSpans))
+            {
+                return false;
+            }
+
+            if (false == WebVttParser.TryParseTagEnd(input, ref position, out endTagName))
+            {
+                return false;
+            }
+
+            if (endTagName != null && false == string.Equals(tagName, endTagName, StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            SpanType spanType;
+            if (false == WebVttParser.TryGetSpanTypeFromName(tagName, out spanType))
+            {
+                return false;
+            }
+
+            span = new Span()
+            {
+                Type = spanType,
+                Children = innerSpans,
+                Annotation = annotation,
+                Classes = classes
+            };
+
+            return true;
+        }
+
+        /// <summary>
+        /// Utility method to get span type by the tag name.
+        /// </summary>
+        /// <param name="tagName">Name of the tag.</param>
+        /// <param name="spanType">If successful, type of the span for this name.</param>
+        /// <returns>True if the tag name matches one of the cue spans; otherwise false.</returns>
+        private static bool TryGetSpanTypeFromName(
+            string tagName,
+            out SpanType spanType)
+        {
+            if (string.Equals(tagName, Constants.ClassSpanName, StringComparison.Ordinal))
+            {
+                spanType = SpanType.Class;
+                return true;
+            }
+
+            if (string.Equals(tagName, Constants.ItalicsSpanName, StringComparison.Ordinal))
+            {
+                spanType = SpanType.Italics;
+                return true;
+            }
+
+            if (string.Equals(tagName, Constants.BoldSpanName, StringComparison.Ordinal))
+            {
+                spanType = SpanType.Bold;
+                return true;
+            }
+
+            if (string.Equals(tagName, Constants.LanguageSpanName, StringComparison.Ordinal))
+            {
+                spanType = SpanType.Language;
+                return true;
+            }
+
+            if (string.Equals(tagName, Constants.RubySpanName, StringComparison.Ordinal))
+            {
+                spanType = SpanType.Ruby;
+                return true;
+            }
+
+            if (string.Equals(tagName, Constants.RubyTextSpanName, StringComparison.Ordinal))
+            {
+                spanType = SpanType.RubyText;
+                return true;
+            }
+
+            if (string.Equals(tagName, Constants.UnderlineSpanName, StringComparison.Ordinal))
+            {
+                spanType = SpanType.Underline;
+                return true;
+            }
+
+            if (string.Equals(tagName, Constants.VoiceSpanName, StringComparison.Ordinal))
+            {
+                spanType = SpanType.Voice;
+                return true;
+            }
+
+            spanType = default(SpanType);
+            return false;
+        }
+
+        /// <summary>
+        /// Utility method to parse start tag from the input string.
+        /// </summary>
+        /// <param name="input">Input string to process.</param>
+        /// <param name="position">Position in the string to begin parsing.</param>
+        /// <param name="tagName">If successfull, contains the name of the tag; otherwise null.</param>
+        /// <param name="classes">If successfull, contains list of classes for the tag; otherwise null.</param>
+        /// <param name="annotation">If successfull, contains the annotation text of the tag; otherwise null.</param>
+        /// <returns>True if parsing was successful; otherwise false.</returns>
+        private static bool TryParseTagStart(
+            string input,
+            ref int position,
+            out string tagName,
+            out List<string> classes,
+            out string annotation)
+        {
+            tagName = null;
+            classes = null;
+            annotation = null;
+
+            if (position >= input.Length
+                || input.Length - position < 3
+                || input[position] != '<')
+            {
+                return false;
+            }
+
+            position++;
+            int start = position;
+            for (; position < input.Length; position++)
+            {
+                char c = input[position];
+                if (char.IsWhiteSpace(c)
+                    || c == '.'
+                    || c == '>')
+                {
+                    break;
+                }
+            }
+
+            if (input.Length <= position || start == position)
+            {
+                return false;
+            }
+
+            switch (input[position])
+            {
+                case '\r':
+                case '\n':
+                    return false;
+            }
+
+            tagName = input.Substring(start, position - start);
+
+            if (input[position] == '.')
+            {
+                position++;
+                start = position;
+                for (; position < input.Length; position++)
+                {
+                    char c = input[position];
+                    if (c == '.' || char.IsWhiteSpace(c) || c == '>')
+                    {
+                        if (start == position)
+                        {
+                            return false;
+                        }
+
+                        if (classes == null)
+                        {
+                            classes = new List<string>();
+                        }
+
+                        classes.Add(input.Substring(start, position - start));
+                        start = position + 1;
+
+                        if (c != '.')
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                if (input.Length <= position)
+                {
+                    return false;
+                }
+            }
+
+            if (input[position] == '>')
+            {
+                position++;
+                return true;
+            }
+
+            position++;
+            start = position;
+
+            while (position < input.Length && input[position] != '>' && input[position] != '\r' && input[position] != '\n')
+            {
+                position++;
+            }
+
+            if (input.Length <= position
+                || input[position] != '>')
+            {
+                return false;
+            }
+
+            annotation = input.Substring(start, position - start);
+            position++;
+            return true;
+        }
+
+        /// <summary>
+        /// Utility method to parse tag end marker.
+        /// </summary>
+        /// <param name="input">Input string to process.</param>
+        /// <param name="position">Position in the string to begin parsing.</param>
+        /// <param name="tagName">If successful, contains tag name of the end tag marker.</param>
+        /// <returns>True if tag end was successfully parsed; otherwise false.</returns>
+        private static bool TryParseTagEnd(
+            string input,
+            ref int position,
+            out string tagName)
+        {
+            tagName = null;
+
+            if (input.Length == position)
+            {
+                return true;
+            }
+
+            int start = position;
+            char c = input[position];
+            while ((c == '\r' || c == '\n') && position < input.Length)
+            {
+                position++;
+                c = input[position];
+            }
+
+            if (start < position)
+            {
+                return true;
+            }
+
+            if (input.Length - position < 4 || c != '<')
+            {
+                return false;
+            }
+
+            position++;
+            if (input[position] != '/')
+            {
+                return false;
+            }
+
+            position++;
+            start = position;
+            for (; position < input.Length; position++)
+            {
+                c = input[position];
+                if (c == '>')
+                {
+                    break;
+                }
+            }
+
+            if (c != '>')
+            {
+                return false;
+            }
+
+            tagName = input.Substring(start, position - start);
+            return true;
+        }
+
+        /// <summary>
+        /// Utility method to add a span to 
+        /// </summary>
+        /// <param name="span"></param>
+        /// <param name="spans"></param>
+        private static void SafeAddSpan(
+            Span span,
+            ref List<Span> spans)
+        {
+            if (spans == null)
+            {
+                spans = new List<Span>();
+            }
+
+            spans.Add(span);
         }
     }
 }

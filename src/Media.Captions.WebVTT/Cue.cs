@@ -1,6 +1,7 @@
 ﻿namespace Media.Captions.WebVTT
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Media cue block.
@@ -64,5 +65,10 @@
         /// Gets raw content of the cue settings.
         /// </summary>
         public string RawSettings { get; internal set; }
+
+        /// <summary>
+        /// Gets or sets cue content.
+        /// </summary>
+        public List<Span> Content { get; set; }
     }
 }

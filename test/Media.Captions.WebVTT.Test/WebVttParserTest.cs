@@ -644,5 +644,546 @@ STYLE
                 Assert.IsNull(captions.Cues[0].Position);
             }
         }
+
+        [TestMethod]
+        public void ParseItalicsSpan()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<i> italics </i>";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
+                Assert.AreEqual(SpanType.Italics, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be italics.");
+                Assert.IsNull(captions.Cues[0].Content[0].Text, "Cues.Content[0].Text must be null.");
+                Assert.IsNull(captions.Cues[0].Content[0].Annotation, "Cues.Content[0].Annotation must be null.");
+                Assert.IsNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must be null.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Count, "Cues.Content[0].Children.Count is invalid.");
+                Assert.IsNotNull(captions.Cues[0].Content[0].Children[0], "Cues.Content[0].Children[0] must not be null.");
+                Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Children[0].Type, "Cues.Content[0].Children[0].Type is invalid.");
+                Assert.AreEqual(" italics ", captions.Cues[0].Content[0].Children[0].Text, "Cues.Content[0].Children[0].Text is invalid.");
+            }
+        }
+
+        [TestMethod]
+        public void ParseBoldSpan()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<b> bold</b>";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
+                Assert.AreEqual(SpanType.Bold, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be bold.");
+                Assert.IsNull(captions.Cues[0].Content[0].Text, "Cues.Content[0].Text must be null.");
+                Assert.IsNull(captions.Cues[0].Content[0].Annotation, "Cues.Content[0].Annotation must be null.");
+                Assert.IsNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must be null.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Count, "Cues.Content[0].Children.Count is invalid.");
+                Assert.IsNotNull(captions.Cues[0].Content[0].Children[0], "Cues.Content[0].Children[0] must not be null.");
+                Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Children[0].Type, "Cues.Content[0].Children[0].Type is invalid.");
+                Assert.AreEqual(" bold", captions.Cues[0].Content[0].Children[0].Text, "Cues.Content[0].Children[0].Text is invalid.");
+            }
+        }
+
+        [TestMethod]
+        public void ParseUnderlineSpan()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<u>underline </u>";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
+                Assert.AreEqual(SpanType.Underline, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be underline.");
+                Assert.IsNull(captions.Cues[0].Content[0].Text, "Cues.Content[0].Text must be null.");
+                Assert.IsNull(captions.Cues[0].Content[0].Annotation, "Cues.Content[0].Annotation must be null.");
+                Assert.IsNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must be null.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Count, "Cues.Content[0].Children.Count is invalid.");
+                Assert.IsNotNull(captions.Cues[0].Content[0].Children[0], "Cues.Content[0].Children[0] must not be null.");
+                Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Children[0].Type, "Cues.Content[0].Children[0].Type is invalid.");
+                Assert.AreEqual("underline ", captions.Cues[0].Content[0].Children[0].Text, "Cues.Content[0].Children[0].Text is invalid.");
+            }
+        }
+
+        [TestMethod]
+        public void ParseClassSpan()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<c>class</c>";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
+                Assert.AreEqual(SpanType.Class, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be class.");
+                Assert.IsNull(captions.Cues[0].Content[0].Text, "Cues.Content[0].Text must be null.");
+                Assert.IsNull(captions.Cues[0].Content[0].Annotation, "Cues.Content[0].Annotation must be null.");
+                Assert.IsNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must be null.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Count, "Cues.Content[0].Children.Count is invalid.");
+                Assert.IsNotNull(captions.Cues[0].Content[0].Children[0], "Cues.Content[0].Children[0] must not be null.");
+                Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Children[0].Type, "Cues.Content[0].Children[0].Type is invalid.");
+                Assert.AreEqual("class", captions.Cues[0].Content[0].Children[0].Text, "Cues.Content[0].Children[0].Text is invalid.");
+            }
+        }
+
+        [TestMethod]
+        public void ParseLanguageSpan()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<lang en-us>other language</lang>";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
+                Assert.AreEqual(SpanType.Language, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be language.");
+                Assert.IsNull(captions.Cues[0].Content[0].Text, "Cues.Content[0].Text must be null.");
+                Assert.AreEqual("en-us", captions.Cues[0].Content[0].Annotation, "Cues.Content[0].Annotation is invalid.");
+                Assert.IsNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must be null.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Count, "Cues.Content[0].Children.Count is invalid.");
+                Assert.IsNotNull(captions.Cues[0].Content[0].Children[0], "Cues.Content[0].Children[0] must not be null.");
+                Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Children[0].Type, "Cues.Content[0].Children[0].Type is invalid.");
+                Assert.AreEqual("other language", captions.Cues[0].Content[0].Children[0].Text, "Cues.Content[0].Children[0].Text is invalid.");
+            }
+        }
+
+        [TestMethod]
+        public void ParseVoiceSpan()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<v Speaker in Space > Something interesting";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
+                Assert.AreEqual(SpanType.Voice, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be voice.");
+                Assert.IsNull(captions.Cues[0].Content[0].Text, "Cues.Content[0].Text must be null.");
+                Assert.AreEqual("Speaker in Space ", captions.Cues[0].Content[0].Annotation, "Cues.Content[0].Annotation is invalid.");
+                Assert.IsNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must be null.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Count, "Cues.Content[0].Children.Count is invalid.");
+                Assert.IsNotNull(captions.Cues[0].Content[0].Children[0], "Cues.Content[0].Children[0] must not be null.");
+                Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Children[0].Type, "Cues.Content[0].Children[0].Type is invalid.");
+                Assert.AreEqual(" Something interesting", captions.Cues[0].Content[0].Children[0].Text, "Cues.Content[0].Children[0].Text is invalid.");
+            }
+        }
+
+        [TestMethod]
+        public void ParseRubySpan()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<ruby>ruby</ruby>";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
+                Assert.AreEqual(SpanType.Ruby, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be ruby.");
+                Assert.IsNull(captions.Cues[0].Content[0].Text, "Cues.Content[0].Text must be null.");
+                Assert.IsNull(captions.Cues[0].Content[0].Annotation, "Cues.Content[0].Annotation must be null.");
+                Assert.IsNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must be null.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Count, "Cues.Content[0].Children.Count is invalid.");
+                Assert.IsNotNull(captions.Cues[0].Content[0].Children[0], "Cues.Content[0].Children[0] must not be null.");
+                Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Children[0].Type, "Cues.Content[0].Children[0].Type is invalid.");
+                Assert.AreEqual("ruby", captions.Cues[0].Content[0].Children[0].Text, "Cues.Content[0].Children[0].Text is invalid.");
+            }
+        }
+
+        [TestMethod]
+        public void ParseRubyTextSpan()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<rt>ruby_text</rt>";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
+                Assert.AreEqual(SpanType.RubyText, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be ruby text.");
+                Assert.IsNull(captions.Cues[0].Content[0].Text, "Cues.Content[0].Text must be null.");
+                Assert.IsNull(captions.Cues[0].Content[0].Annotation, "Cues.Content[0].Annotation must be null.");
+                Assert.IsNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must be null.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Count, "Cues.Content[0].Children.Count is invalid.");
+                Assert.IsNotNull(captions.Cues[0].Content[0].Children[0], "Cues.Content[0].Children[0] must not be null.");
+                Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Children[0].Type, "Cues.Content[0].Children[0].Type is invalid.");
+                Assert.AreEqual("ruby_text", captions.Cues[0].Content[0].Children[0].Text, "Cues.Content[0].Children[0].Text is invalid.");
+            }
+        }
+
+        [TestMethod]
+        public void ParseSpanWithManyClasses()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<v.very.loud.many.classes Voice Name >";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
+                Assert.AreEqual(SpanType.Voice, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be voice.");
+                Assert.IsNull(captions.Cues[0].Content[0].Text, "Cues.Content[0].Text must be null.");
+                Assert.AreEqual("Voice Name ", captions.Cues[0].Content[0].Annotation, "Cues.Content[0].Annotation is invalid.");
+                Assert.IsNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must be null.");
+                
+                Assert.IsNotNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must not be null.");
+                CollectionAssert.AreEquivalent(
+                    new string[] { "very", "loud", "many", "classes" },
+                    captions.Cues[0].Content[0].Classes,
+                    "Cues.Content[0].Classes are invalid.");
+            }
+        }
+
+        [TestMethod]
+        public void ParseNestedSpans()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+Some city with <i.foreignphrase><lang en>playground</lang></i> in it";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+                Assert.AreEqual(3, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
+                Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be text.");
+                Assert.AreEqual("Some city with ", captions.Cues[0].Content[0].Text, "Cues.Content[0].Text is invalid.");
+                Assert.IsNull(captions.Cues[0].Content[0].Annotation, "Cues.Content[0].Annotation must be null.");
+                Assert.IsNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must be null.");
+                Assert.IsNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must be null.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[1], "Cues.Content[1] must not be null.");
+                Assert.AreEqual(SpanType.Italics, captions.Cues[0].Content[1].Type, "Cues.Content[1] must be italics.");
+                Assert.IsNull(captions.Cues[0].Content[1].Text, "Cues.Content[1].Text must be null.");
+                Assert.IsNull(captions.Cues[0].Content[1].Annotation, "Cues.Content[1].Annotation must be null.");
+                Assert.IsNotNull(captions.Cues[0].Content[1].Classes, "Cues.Content[1].Classes must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content[1].Classes.Count, "Invalid Cues.Content[1].Classes.Count.");
+                Assert.AreEqual("foreignphrase", captions.Cues[0].Content[1].Classes[0], "Invalid Cues.Content[1].Classes[0] value.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[1].Children, "Cues.Content[1].Children must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content[1].Children.Count, "Cues.Content[1].Children.Count is invalid.");
+                Assert.AreEqual(SpanType.Language, captions.Cues[0].Content[1].Children[0].Type, "Cues.Content[1].Children[0] must be Language.");
+                Assert.IsNull(captions.Cues[0].Content[1].Children[0].Text, "Cues.Content[1].Children[0].Text must be null.");
+                Assert.AreEqual("en", captions.Cues[0].Content[1].Children[0].Annotation, "Cues.Content[1].Children[0].Annotation is invalid.");
+                Assert.IsNull(captions.Cues[0].Content[1].Children[0].Classes, "Cues.Content[1].Children[0].Classes must be null.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[1].Children[0].Children, "Cues.Content[1].Children[0].Children must not be null.");
+                Assert.AreEqual(1, captions.Cues[0].Content[1].Children[0].Children.Count, "Cues.Content[1].Children[0].Children.Count is invalid.");
+                Assert.IsNotNull(captions.Cues[0].Content[1].Children[0].Children[0], "Cues.Content[1].Children[0].Children[0] must not be null.");
+                Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[1].Children[0].Children[0].Type, "Cues.Content[1].Children[0].Children[0] must be text.");
+                Assert.AreEqual("playground", captions.Cues[0].Content[1].Children[0].Children[0].Text, "Cues.Content[1].Children[0].Children[0].Text is invalid.");
+                Assert.IsNull(captions.Cues[0].Content[1].Children[0].Children[0].Annotation, "Cues.Content[1].Children[0].Children[0].Annotation must be null.");
+                Assert.IsNull(captions.Cues[0].Content[1].Children[0].Children[0].Children, "Cues.Content[1].Children[0].Children[0].Children must be null.");
+                Assert.IsNull(captions.Cues[0].Content[1].Children[0].Children[0].Classes, "Cues.Content[1].Children[0].Children[0].Classes must be null.");
+
+                Assert.IsNotNull(captions.Cues[0].Content[2], "Cues.Content[2] must not be null.");
+                Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[2].Type, "Cues.Content[2] must be text.");
+                Assert.AreEqual(" in it", captions.Cues[0].Content[2].Text, "Cues.Content[2].Text is invalid.");
+                Assert.IsNull(captions.Cues[0].Content[2].Annotation, "Cues.Content[2].Annotation must be null.");
+                Assert.IsNull(captions.Cues[0].Content[2].Children, "Cues.Content[2].Children must be null.");
+                Assert.IsNull(captions.Cues[0].Content[2].Classes, "Cues.Content[2].Classes must be null.");
+            }
+        }
+
+        [TestMethod]
+        public void IfClassEmpty_IgnoresSpan()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<v.. Voice Name >";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+            }
+        }
+
+        [TestMethod]
+        public void IfNewLineInStartTag_IgnoresSpan()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<i
+";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+            }
+        }
+
+        [TestMethod]
+        public void IfNewLineInTagClass_IgnoresSpan()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<i.class
+";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+            }
+        }
+
+        [TestMethod]
+        public void IfNewLineAfterLessThen_IgnoresSpan()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<
+";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+            }
+        }
+
+        [TestMethod]
+        public void IfNewLineAfterLessThenInTagEnd_IgnoresSpan()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<i>italics<
+";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+            }
+        }
+
+        [TestMethod]
+        public void IfWrongTagEnd_IgnoresSpan()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<i>italics</b>";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+            }
+        }
+
+        [TestMethod]
+        public void IfNewLineAfterAnnotation_IgnoresSpan()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<v Speaker ";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+            }
+        }
+
+        [TestMethod]
+        public void IfNoGreaterThenInTagEnd_IgnoresSpan()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<ruby> ruby </ruby
+";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+            }
+        }
+
+        [TestMethod]
+        public void IfInvalidSpan_IgnoresSpan()
+        {
+            string vtt =
+@"WEBVTT
+
+04:05.001 --> 04:07.800
+<random> span </random>";
+
+            using (var reader = new StringReader(vtt))
+            {
+                var captions = WebVttParser.ReadMediaCaptionsAsync(reader).ConfigureAwait(false).GetAwaiter().GetResult();
+                Assert.IsNotNull(captions, "Captions must not be null.");
+                Assert.IsNotNull(captions.Cues, "Captions.Cues must not be null.");
+                Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
+
+                Assert.IsNull(captions.Cues[0].Content, "Cues.Content must not be null.");
+            }
+        }
     }
 }

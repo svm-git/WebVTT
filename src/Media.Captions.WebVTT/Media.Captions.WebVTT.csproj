@@ -54,6 +54,8 @@
     <Compile Include="PositionSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegionDefinition.cs" />
+    <Compile Include="Span.cs" />
+    <Compile Include="SpanType.cs" />
     <Compile Include="Style.cs" />
     <Compile Include="TextAlignment.cs" />
     <Compile Include="VerticalTextLayout.cs" />

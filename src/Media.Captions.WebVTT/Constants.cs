@@ -36,5 +36,14 @@
         public const string LineRightValue = "line-right";
         public const string RightToLeftValue = "rl";
         public const string LeftToRightValue = "lr";
+
+        public const string ClassSpanName = "c";
+        public const string ItalicsSpanName = "i";
+        public const string BoldSpanName = "b";
+        public const string UnderlineSpanName = "u";
+        public const string RubySpanName = "ruby";
+        public const string RubyTextSpanName = "rt";
+        public const string VoiceSpanName = "v";
+        public const string LanguageSpanName = "lang";
     }
 }
