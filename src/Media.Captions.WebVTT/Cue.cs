@@ -69,6 +69,6 @@
         /// <summary>
         /// Gets or sets cue content.
         /// </summary>
-        public List<Span> Content { get; set; }
+        public Span[] Content { get; set; }
     }
 }

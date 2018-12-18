@@ -431,7 +431,7 @@
                     && spans != null
                     && spans.Count > 0)
                 {
-                    result.Content = spans;
+                    result.Content = spans.ToArray();
                 }
             }
 
@@ -1089,9 +1089,9 @@
             span = new Span()
             {
                 Type = spanType,
-                Children = innerSpans,
+                Children = innerSpans != null && innerSpans.Count > 0 ? innerSpans.ToArray() : null,
                 Annotation = annotation,
-                Classes = classes
+                Classes = classes != null && classes.Count > 0 ? classes.ToArray() : null
             };
 
             return true;

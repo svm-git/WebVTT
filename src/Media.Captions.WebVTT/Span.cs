@@ -16,12 +16,12 @@
         /// <summary>
         /// Gets or sets classes of the span.
         /// </summary>
-        public List<string> Classes { get; set; }
+        public string[] Classes { get; set; }
 
         /// <summary>
         /// Gets or sets children spans.
         /// </summary>
-        public List<Span> Children { get; set; }
+        public Span[] Children { get; set; }
 
         /// <summary>
         /// Gets or sets span annotation.

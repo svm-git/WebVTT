@@ -662,7 +662,7 @@ STYLE
                 Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
 
                 Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Length, "Cues.Content.Length is invalid.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
                 Assert.AreEqual(SpanType.Italics, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be italics.");
@@ -671,7 +671,7 @@ STYLE
                 Assert.IsNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must be null.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Count, "Cues.Content[0].Children.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Length, "Cues.Content[0].Children.Length is invalid.");
                 Assert.IsNotNull(captions.Cues[0].Content[0].Children[0], "Cues.Content[0].Children[0] must not be null.");
                 Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Children[0].Type, "Cues.Content[0].Children[0].Type is invalid.");
                 Assert.AreEqual(" italics ", captions.Cues[0].Content[0].Children[0].Text, "Cues.Content[0].Children[0].Text is invalid.");
@@ -695,7 +695,7 @@ STYLE
                 Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
 
                 Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Length, "Cues.Content.Length is invalid.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
                 Assert.AreEqual(SpanType.Bold, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be bold.");
@@ -704,7 +704,7 @@ STYLE
                 Assert.IsNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must be null.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Count, "Cues.Content[0].Children.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Length, "Cues.Content[0].Children.Length is invalid.");
                 Assert.IsNotNull(captions.Cues[0].Content[0].Children[0], "Cues.Content[0].Children[0] must not be null.");
                 Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Children[0].Type, "Cues.Content[0].Children[0].Type is invalid.");
                 Assert.AreEqual(" bold", captions.Cues[0].Content[0].Children[0].Text, "Cues.Content[0].Children[0].Text is invalid.");
@@ -728,7 +728,7 @@ STYLE
                 Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
 
                 Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Length, "Cues.Content.Length is invalid.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
                 Assert.AreEqual(SpanType.Underline, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be underline.");
@@ -737,7 +737,7 @@ STYLE
                 Assert.IsNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must be null.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Count, "Cues.Content[0].Children.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Length, "Cues.Content[0].Children.Length is invalid.");
                 Assert.IsNotNull(captions.Cues[0].Content[0].Children[0], "Cues.Content[0].Children[0] must not be null.");
                 Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Children[0].Type, "Cues.Content[0].Children[0].Type is invalid.");
                 Assert.AreEqual("underline ", captions.Cues[0].Content[0].Children[0].Text, "Cues.Content[0].Children[0].Text is invalid.");
@@ -761,7 +761,7 @@ STYLE
                 Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
 
                 Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Length, "Cues.Content.Length is invalid.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
                 Assert.AreEqual(SpanType.Class, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be class.");
@@ -770,7 +770,7 @@ STYLE
                 Assert.IsNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must be null.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Count, "Cues.Content[0].Children.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Length, "Cues.Content[0].Children.Length is invalid.");
                 Assert.IsNotNull(captions.Cues[0].Content[0].Children[0], "Cues.Content[0].Children[0] must not be null.");
                 Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Children[0].Type, "Cues.Content[0].Children[0].Type is invalid.");
                 Assert.AreEqual("class", captions.Cues[0].Content[0].Children[0].Text, "Cues.Content[0].Children[0].Text is invalid.");
@@ -794,7 +794,7 @@ STYLE
                 Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
 
                 Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Length, "Cues.Content.Length is invalid.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
                 Assert.AreEqual(SpanType.Language, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be language.");
@@ -803,7 +803,7 @@ STYLE
                 Assert.IsNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must be null.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Count, "Cues.Content[0].Children.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Length, "Cues.Content[0].Children.Length is invalid.");
                 Assert.IsNotNull(captions.Cues[0].Content[0].Children[0], "Cues.Content[0].Children[0] must not be null.");
                 Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Children[0].Type, "Cues.Content[0].Children[0].Type is invalid.");
                 Assert.AreEqual("other language", captions.Cues[0].Content[0].Children[0].Text, "Cues.Content[0].Children[0].Text is invalid.");
@@ -827,7 +827,7 @@ STYLE
                 Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
 
                 Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Length, "Cues.Content.Length is invalid.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
                 Assert.AreEqual(SpanType.Voice, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be voice.");
@@ -836,7 +836,7 @@ STYLE
                 Assert.IsNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must be null.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Count, "Cues.Content[0].Children.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Length, "Cues.Content[0].Children.Length is invalid.");
                 Assert.IsNotNull(captions.Cues[0].Content[0].Children[0], "Cues.Content[0].Children[0] must not be null.");
                 Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Children[0].Type, "Cues.Content[0].Children[0].Type is invalid.");
                 Assert.AreEqual(" Something interesting", captions.Cues[0].Content[0].Children[0].Text, "Cues.Content[0].Children[0].Text is invalid.");
@@ -860,7 +860,7 @@ STYLE
                 Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
 
                 Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Length, "Cues.Content.Length is invalid.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
                 Assert.AreEqual(SpanType.Ruby, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be ruby.");
@@ -869,7 +869,7 @@ STYLE
                 Assert.IsNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must be null.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Count, "Cues.Content[0].Children.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Length, "Cues.Content[0].Children.Length is invalid.");
                 Assert.IsNotNull(captions.Cues[0].Content[0].Children[0], "Cues.Content[0].Children[0] must not be null.");
                 Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Children[0].Type, "Cues.Content[0].Children[0].Type is invalid.");
                 Assert.AreEqual("ruby", captions.Cues[0].Content[0].Children[0].Text, "Cues.Content[0].Children[0].Text is invalid.");
@@ -893,7 +893,7 @@ STYLE
                 Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
 
                 Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Length, "Cues.Content.Length is invalid.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
                 Assert.AreEqual(SpanType.RubyText, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be ruby text.");
@@ -902,7 +902,7 @@ STYLE
                 Assert.IsNull(captions.Cues[0].Content[0].Classes, "Cues.Content[0].Classes must be null.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0].Children, "Cues.Content[0].Children must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Count, "Cues.Content[0].Children.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content[0].Children.Length, "Cues.Content[0].Children.Length is invalid.");
                 Assert.IsNotNull(captions.Cues[0].Content[0].Children[0], "Cues.Content[0].Children[0] must not be null.");
                 Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Children[0].Type, "Cues.Content[0].Children[0].Type is invalid.");
                 Assert.AreEqual("ruby_text", captions.Cues[0].Content[0].Children[0].Text, "Cues.Content[0].Children[0].Text is invalid.");
@@ -926,7 +926,7 @@ STYLE
                 Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
 
                 Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content.Length, "Cues.Content.Length is invalid.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
                 Assert.AreEqual(SpanType.Voice, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be voice.");
@@ -959,7 +959,7 @@ Some city with <i.foreignphrase><lang en>playground</lang></i> in it";
                 Assert.IsTrue(captions.Cues.Length == 1, "Length must be 1.");
 
                 Assert.IsNotNull(captions.Cues[0].Content, "Cues.Content must not be null.");
-                Assert.AreEqual(3, captions.Cues[0].Content.Count, "Cues.Content.Count is invalid.");
+                Assert.AreEqual(3, captions.Cues[0].Content.Length, "Cues.Content.Length is invalid.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[0], "Cues.Content[0] must not be null.");
                 Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[0].Type, "Cues.Content[0] must be text.");
@@ -973,18 +973,18 @@ Some city with <i.foreignphrase><lang en>playground</lang></i> in it";
                 Assert.IsNull(captions.Cues[0].Content[1].Text, "Cues.Content[1].Text must be null.");
                 Assert.IsNull(captions.Cues[0].Content[1].Annotation, "Cues.Content[1].Annotation must be null.");
                 Assert.IsNotNull(captions.Cues[0].Content[1].Classes, "Cues.Content[1].Classes must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content[1].Classes.Count, "Invalid Cues.Content[1].Classes.Count.");
-                Assert.AreEqual("foreignphrase", captions.Cues[0].Content[1].Classes[0], "Invalid Cues.Content[1].Classes[0] value.");
+                Assert.AreEqual(1, captions.Cues[0].Content[1].Classes.Length, "Cues.Content[1].Classes.Length is invalid.");
+                Assert.AreEqual("foreignphrase", captions.Cues[0].Content[1].Classes[0], "Cues.Content[1].Classes[0] is invalid.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[1].Children, "Cues.Content[1].Children must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content[1].Children.Count, "Cues.Content[1].Children.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content[1].Children.Length, "Cues.Content[1].Children.Length is invalid.");
                 Assert.AreEqual(SpanType.Language, captions.Cues[0].Content[1].Children[0].Type, "Cues.Content[1].Children[0] must be Language.");
                 Assert.IsNull(captions.Cues[0].Content[1].Children[0].Text, "Cues.Content[1].Children[0].Text must be null.");
                 Assert.AreEqual("en", captions.Cues[0].Content[1].Children[0].Annotation, "Cues.Content[1].Children[0].Annotation is invalid.");
                 Assert.IsNull(captions.Cues[0].Content[1].Children[0].Classes, "Cues.Content[1].Children[0].Classes must be null.");
 
                 Assert.IsNotNull(captions.Cues[0].Content[1].Children[0].Children, "Cues.Content[1].Children[0].Children must not be null.");
-                Assert.AreEqual(1, captions.Cues[0].Content[1].Children[0].Children.Count, "Cues.Content[1].Children[0].Children.Count is invalid.");
+                Assert.AreEqual(1, captions.Cues[0].Content[1].Children[0].Children.Length, "Cues.Content[1].Children[0].Children.Length is invalid.");
                 Assert.IsNotNull(captions.Cues[0].Content[1].Children[0].Children[0], "Cues.Content[1].Children[0].Children[0] must not be null.");
                 Assert.AreEqual(SpanType.Text, captions.Cues[0].Content[1].Children[0].Children[0].Type, "Cues.Content[1].Children[0].Children[0] must be text.");
                 Assert.AreEqual("playground", captions.Cues[0].Content[1].Children[0].Children[0].Text, "Cues.Content[1].Children[0].Children[0].Text is invalid.");
