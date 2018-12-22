@@ -142,7 +142,7 @@ Bad caption";
 
         [TestMethod]
         [ExpectedException(typeof(InvalidDataException))]
-        public void IfNoFractionsInTiming_Throw()
+        public void IfNoFractionsInTiming_Throws()
         {
             string vtt =
 @"WEBVTT
@@ -158,7 +158,7 @@ Bad caption";
 
         [TestMethod]
         [ExpectedException(typeof(InvalidDataException))]
-        public void IfTooManyDigitsInMinutesInTiming_Throw()
+        public void IfTooManyDigitsInMinutesInTiming_Throws()
         {
             string vtt =
 @"WEBVTT
@@ -174,7 +174,7 @@ Bad caption";
 
         [TestMethod]
         [ExpectedException(typeof(InvalidDataException))]
-        public void IfTooManyDigitsInSecondsInTiming_Throw()
+        public void IfTooManyDigitsInSecondsInTiming_Throws()
         {
             string vtt =
 @"WEBVTT
@@ -190,7 +190,7 @@ Bad caption";
 
         [TestMethod]
         [ExpectedException(typeof(InvalidDataException))]
-        public void IfOnlyFractionsInTiming_Throw()
+        public void IfOnlyFractionsInTiming_Throws()
         {
             string vtt =
 @"WEBVTT
@@ -206,7 +206,7 @@ Bad caption";
 
         [TestMethod]
         [ExpectedException(typeof(InvalidDataException))]
-        public void IfHoursTooLargeInTiming_Throw()
+        public void IfHoursTooLargeInTiming_Throws()
         {
             string vtt =
 @"WEBVTT
@@ -222,7 +222,7 @@ Bad caption";
 
         [TestMethod]
         [ExpectedException(typeof(InvalidDataException))]
-        public void IfTooManyFractionDigitsInTiming_Throw()
+        public void IfTooManyFractionDigitsInTiming_Throws()
         {
             string vtt =
 @"WEBVTT
@@ -238,7 +238,7 @@ Bad caption";
 
         [TestMethod]
         [ExpectedException(typeof(InvalidDataException))]
-        public void IfTooManyMinutesInTiming_Throw()
+        public void IfTooManyMinutesInTiming_Throws()
         {
             string vtt =
 @"WEBVTT
@@ -254,7 +254,7 @@ Bad caption";
 
         [TestMethod]
         [ExpectedException(typeof(InvalidDataException))]
-        public void IfTooManySecondsInTiming_Throw()
+        public void IfTooManySecondsInTiming_Throws()
         {
             string vtt =
 @"WEBVTT
@@ -270,7 +270,7 @@ Bad caption";
 
         [TestMethod]
         [ExpectedException(typeof(InvalidDataException))]
-        public void IfHasHours_And_TooManyMinutesInTiming_Throw()
+        public void IfHasHours_And_TooManyMinutesInTiming_Throws()
         {
             string vtt =
 @"WEBVTT
@@ -286,7 +286,7 @@ Bad caption";
 
         [TestMethod]
         [ExpectedException(typeof(InvalidDataException))]
-        public void IfHasHours_And_TooManySecondsInTiming_Throw()
+        public void IfHasHours_And_TooManySecondsInTiming_Throws()
         {
             string vtt =
 @"WEBVTT
@@ -302,7 +302,7 @@ Bad caption";
 
         [TestMethod]
         [ExpectedException(typeof(InvalidDataException))]
-        public void IfTooFewSecondsDigitsInTiming_Throw()
+        public void IfTooFewSecondsDigitsInTiming_Throws()
         {
             string vtt =
 @"WEBVTT
@@ -318,7 +318,7 @@ Bad caption";
 
         [TestMethod]
         [ExpectedException(typeof(InvalidDataException))]
-        public void IfHasHours_And_TooFewSecondsDigitsInTiming_Throw()
+        public void IfHasHours_And_TooFewSecondsDigitsInTiming_Throws()
         {
             string vtt =
 @"WEBVTT
@@ -334,7 +334,7 @@ Bad caption";
 
         [TestMethod]
         [ExpectedException(typeof(InvalidDataException))]
-        public void IfTooFewMinutessDigitsInTiming_Throw()
+        public void IfTooFewMinutessDigitsInTiming_Throws()
         {
             string vtt =
 @"WEBVTT
@@ -350,7 +350,7 @@ Bad caption";
 
         [TestMethod]
         [ExpectedException(typeof(InvalidDataException))]
-        public void IfHasHours_And_TooFewMinutessDigitsInTiming_Throw()
+        public void IfHasHours_And_TooFewMinutessDigitsInTiming_Throws()
         {
             string vtt =
 @"WEBVTT
@@ -382,7 +382,7 @@ Bad caption";
 
         [TestMethod]
         [ExpectedException(typeof(InvalidDataException))]
-        public void IfEndLessThanStart_Throw()
+        public void IfEndLessThanStart_Throws()
         {
             string vtt =
 @"WEBVTT
@@ -398,7 +398,7 @@ Bad caption";
 
         [TestMethod]
         [ExpectedException(typeof(InvalidDataException))]
-        public void IfRegionAfterCue_Throw()
+        public void IfRegionAfterCue_Throws()
         {
             string vtt =
 @"WEBVTT
@@ -417,7 +417,7 @@ Some:data";
 
         [TestMethod]
         [ExpectedException(typeof(InvalidDataException))]
-        public void IfStyleAfterCue_Throw()
+        public void IfStyleAfterCue_Throws()
         {
             string vtt =
 @"WEBVTT
